@@ -1,0 +1,174 @@
+{% extends 'companymaster.html' %}
+{% load static %}
+
+
+
+{% block company %}
+
+
+  <!-- Content Wrapper. Contains page content -->
+  <div class="content-wrapper">
+    <!-- Content Header (Page header) -->
+    <section class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1>Contact History</h1>
+          </div>
+          <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+              <li class="breadcrumb-item"><a href="{% url 'companyadminpanel' %}">Dashboard</a></li>
+              <li class="breadcrumb-item active">Contact Details</li>
+            </ol>
+          </div>
+        </div>
+      </div><!-- /.container-fluid -->
+    </section>
+
+
+
+
+              <div class="card-header">
+              </div>
+            <form action="" method="post" >
+              {% csrf_token %}
+              <div class="card-body pad table-responsive">
+                <table class="table table-bordered text-center">
+                  <tbody>
+                  <tr>
+
+                    <td>
+                      <label>Category Types</label>
+                      <select id="none" class="btn btn-block btn-warning" name="category">
+                        <option value="None">None</option>
+                        {% for i in cat %}
+                           <option value="{{ i.category }}">{{ i.category }}</option>
+                        {% endfor %}
+                      </select>
+                    </td>
+
+                    <td>
+                      <label>Call Types</label>
+                      <select class="btn btn-block btn-warning" name="type">
+                        <option value="None">None</option>
+                        {% for i in calltype %}
+                           <option value="{{ i.type }}">{{ i.type }}</option>
+                        {% endfor %}
+                      </select>
+                    </td>
+
+                    <td>
+                      <label>User Mobile</label>
+                      <select id="" class="btn btn-block btn-warning" name="mobile">
+                        <option value="None">None</option>
+                        {% for i in umobile %}
+                           <option value="{{ i.mobile }}">{{ i.mobile }}</option>
+                        {% endfor %}
+                      </select>
+                    </td>
+
+                    <td>
+                      <label>Date And Times</label>
+                    <select class="btn btn-block btn-warning" name="create_at">
+                      <option value="None">None</option>
+                        {% for i in dtimes %}
+                           <option value="{{ i.create_at }}">{{ i.create_at }}</option>
+                        {% endfor %}
+                      </select>
+                    </td>
+
+                    <td>
+                      <label>Call Durations</label>
+                      <select class="btn btn-block btn-warning" name="duration">
+                        <option value="None">None</option>
+                        {% for i in calldur %}
+                           <option value="{{ i.duration }}">{{ i.duration }}</option>
+                        {% endfor %}
+                      </select>
+                    </td>
+
+                    <td>
+                    <label>Person Name</label>
+                      <select class="btn btn-block btn-warning" name="name">
+                        <option value="None">None</option>
+                        {% for i in pname %}
+                           <option value="{{ i.name }}">{{ i.name }}</option>
+                        {% endfor %}
+                      </select>                    </td>
+
+                     <td>
+                       <input type="submit" class="btn btn-warning" value="Filter" />
+                    </td>
+                  </tr>
+                </tbody></table>
+              </div>
+              <!-- /.card -->
+              </form>
+
+
+    <!-- Main content -->
+    <section class="content">
+      <div class="row">
+        <div class="col-12">
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Contact History</h3>
+            </div>
+            <!-- /.card-header -->
+            <div class="card-body">
+              <table id="example2" class="table table-bordered table-hover">
+                <thead>
+                <tr>
+                  <th>User Name</th>
+                  <th>Name</th>
+                  <th>Mobile</th>
+                  <th>Duration</th>
+                  <th>Call Types</th>
+                  <th>Category</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                {% for i in data %}
+                <tr>
+                  <td>{{ i.user }}</td>
+                  <td>{{ i.name }}</td>
+                  <td>{{ i.mobile }}</td>
+                  <td>{{ i.duration }}</td>
+                  <td>{{ i.type }}</td>
+                  <td>{{ i.category }}</td>
+
+                </tr>
+                {% endfor %}
+
+                </tbody>
+                <tfoot>
+                </tfoot>
+              </table>
+            </div>
+            <!-- /.card-body -->
+          </div>
+          <!-- /.card -->
+
+          <!-- /.card -->
+        </div>
+        <!-- /.col -->
+      </div>
+      <!-- /.row -->
+    </section>
+    <!-- /.content -->
+
+
+
+
+
+
+     <a id="back-to-top" href="#" class="btn btn-primary back-to-top" role="button" aria-label="Scroll to top">
+      <i class="fas fa-chevron-up"></i>
+    </a>
+  </div>
+  <!-- /.content-wrapper -->
+
+
+
+{% endblock %}

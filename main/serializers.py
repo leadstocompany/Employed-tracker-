@@ -9,6 +9,12 @@ class AndroidDataSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class AndroidDataSerializerWithoutUser(serializers.ModelSerializer):
+    class Meta:
+        model = AndroidData
+        exclude = ["user"]
+
+
 class ContactDetailsSerializer(serializers.ModelSerializer):
     class Meta:
         model = ContactDetails

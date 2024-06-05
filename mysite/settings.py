@@ -25,9 +25,9 @@ SECRET_KEY = "django-insecure-x8g-@8g@-1wio2ct2#3)97!2!jkd^nahs^e2oau^j!p3)@#qj2
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-url = "https://employee.iamag.duckdns.org"
+url = "https://f57e-103-77-136-95.ngrok-free.app"
 
-ALLOWED_HOSTS = [url.split("//")[1],"localhost"]
+ALLOWED_HOSTS = [url.split("//")[1], "localhost"]
 
 CSRF_TRUSTED_ORIGINS = [url]
 
@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "drf_yasg",
+    "drf_spectacular",
+    "drf_spectacular_sidecar",
     "main",
     "companyadminuser",
     "subadminuser",
@@ -148,10 +149,23 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
-    )
+    ),
 }
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Employee Tracker",
+    "DESCRIPTION": "Employee Tracker API",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_DIST": "SIDECAR",  # shorthand to use the sidecar instead
+    "SWAGGER_UI_FAVICON_HREF": "SIDECAR",
+    "REDOC_DIST": "SIDECAR",
+    # OTHER SETTINGS
+}
+
 
 SIMPLE_JWT = {
     "ALGORITHM": "HS256",
@@ -161,6 +175,8 @@ SIMPLE_JWT = {
     "ISSUER": None,
     "JWK_URL": None,
     "LEEWAY": 0,
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=365),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
     "AUTH_HEADER_TYPES": ("Bearer",),
     "AUTH_HEADER_NAME": "HTTP_AUTHORIZATION",
     "USER_ID_FIELD": "id",

@@ -7,14 +7,17 @@ import random
 import jwt
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
-from django.http import JsonResponse
+from django.http import JsonResponse, request
 from django.shortcuts import get_object_or_404, redirect, render
-from drf_yasg.utils import swagger_auto_schema, swagger_serializer_method
+from drf_spectacular.utils import extend_schema
 from rest_framework import status, viewsets
-from rest_framework.decorators import api_view
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework_simplejwt.tokens import RefreshToken
+from datetime import datetime
+from dateutil.parser import parse
 
 from .models import *
 from .serializers import *
@@ -554,7 +557,9 @@ class ContactDetailsView(viewsets.ModelViewSet):
 
 
 class AddMultipleContactView(APIView):
-    @swagger_auto_schema(request_body=ContactDetailsSerializer(many=True))
+    @extend_schema(
+        request=ContactDetailsSerializer(many=True), responses=ContactDetailsSerializer
+    )
     def post(self, request, format=None):
         print(request.data)
         serializer = ContactDetailsSerializer(data=request.data, many=True)
@@ -577,20 +582,34 @@ class AddMultipleContactView(APIView):
 
 
 class AddMultipleCallLogs(APIView):
-    @swagger_auto_schema(request_body=AndroidDataSerializer(many=True))
+
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        request=AndroidDataSerializerWithoutUser(many=True),
+        responses=AndroidDataSerializer,
+    )
     def post(self, request, format=None):
         print(request.data)
-        serializer = AndroidDataSerializer(data=request.data, many=True)
-        if serializer.is_valid():
-            for contact in serializer.data:
-                print(contact)
-                # check contact exist or not
-                if not AndroidDataSerializer.objects.filter(
-                    mobile=contact["mobile"], user_id=contact["user"]
-                ).exists():
-                    pass
+        serializer = AndroidDataSerializerWithoutUser(data=request.data, many=True)
+
+        # fina latest call logs
+        latest_call_logs = AndroidData.objects.order_by("-date").first()
+
+
+        if latest_call_logs is not None:
+            if serializer.is_valid():
+                for logs in serializer.data:
+                    if latest_call_logs.date <= parse(logs["date"]):
+                        AndroidData.objects.create(**logs, user=request.user)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            if serializer.is_valid():
+                for logs in serializer.data:
+                    AndroidData.objects.create(**logs, user=request.user)
+            else:
+                return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         return Response("Contact Added Successfully", status=201)
 
 
@@ -666,6 +685,7 @@ def call_details(request, username):
 class LoginView(APIView):
     permission_classes = (AllowAny,)
 
+    @extend_schema(request={"username", "password"})
     def post(self, request, *args, **kwargs):
         username = request.data["username"]
         password = request.data["password"]
@@ -675,11 +695,22 @@ class LoginView(APIView):
         user = authenticate(username=username, password=password)
 
         if user is not None:
-            payload = {"user_id": user.id, "token_type": "access"}
+
+            refresh = RefreshToken.for_user(user)
+
+            payload = {
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+            }
 
             user = {"user": username, "email": user.email, "user_id": user.id}
             return JsonResponse(
-                {"success": "Login Success Fully", "user": user, "status": True},
+                {
+                    "success": "Login Success Fully",
+                    "user": user,
+                    "status": True,
+                    "tokens": payload,
+                },
                 status=status.HTTP_200_OK,
             )
 

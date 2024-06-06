@@ -32,7 +32,7 @@ SECRET_KEY = "django-insecure-x8g-@8g@-1wio2ct2#3)97!2!jkd^nahs^e2oau^j!p3)@#qj2
 DEBUG = True
 url = "https://a094-103-77-136-95.ngrok-free.app"
 
-ALLOWED_HOSTS = [url.split("//")[1], "localhost"]
+ALLOWED_HOSTS = [url.split("//")[1], "localhost", "*"]
 
 CSRF_TRUSTED_ORIGINS = [url]
 

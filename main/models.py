@@ -6,7 +6,34 @@ from django.db import models
 
 # @superuser_required()
 # @staff_member_required
+from django.contrib.auth.models import BaseUserManager
 
+class UserManager(BaseUserManager):
+    def create_user(self, username, email, password=None, **extra_fields):
+        """
+        Create and return a regular user with an email and password.
+        """
+        if not email:
+            raise ValueError('The Email field must be set')
+        email = self.normalize_email(email)
+        user = self.model(username=username, email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, email, password=None, **extra_fields):
+        """
+        Create and return a superuser with an email and password.
+        """
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+        extra_fields.setdefault('is_admin', True)
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_user(username, email, password, **extra_fields)
 
 class User(AbstractUser):
     is_admin = models.BooleanField("Is Admin", default=False)
@@ -14,9 +41,11 @@ class User(AbstractUser):
     is_company = models.BooleanField("Is Company", default=False)
     is_employee = models.BooleanField("Is Employee", default=False)
     cats = models.IntegerField(default=0, blank=True, null=True)
-
+    objects = UserManager()  
+    def __str__(self):
+        return self.username
     # def save(self, *args, **kwargs):
-    #
+       
     #     # Ensure password is hashed if it has been set/changed
     #     if self.pk is None and self.password:
     #         self.set_password(self.password)
@@ -26,16 +55,7 @@ class User(AbstractUser):
     #             self.set_password(self.password)
     #     super().save(*args, **kwargs)
     #
-    # def update(self, *args, **kwargs):
-    #     # Ensure password is hashed if it has been set/changed
-    #     if self.pk is None and self.password:
-    #         self.set_password(self.password)
-    #     else:
-    #         existing_user = User.objects.filter(pk=self.pk).first()
-    #         if existing_user and existing_user.password != self.password:
-    #             self.set_password(self.password)
-    #     super().save(*args, **kwargs)
-
+   
 
 # https://github.com/MamaMoh/Role_based_login_system/blob/master/account/models.py
 
@@ -83,7 +103,6 @@ class EmployeeAdmin(models.Model):
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, blank=True, related_name="employee.user_name +"
     )
-    # manager = models.ForeignKey(CompanyAdmin, on_delete=models.CASCADE, blank=True, editable=False)
     manager = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="company.sub_manager +"
     )

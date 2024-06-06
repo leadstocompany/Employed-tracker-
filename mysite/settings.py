@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 import os
 from datetime import timedelta
-from os import getenv
+from os import environ, getenv
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -30,7 +30,7 @@ SECRET_KEY = "django-insecure-x8g-@8g@-1wio2ct2#3)97!2!jkd^nahs^e2oau^j!p3)@#qj2
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-url = "https://employee.iamag.duckdns.org"
+url = environ.get("HOST") or "https://employee.iamag.duckdns.org"
 
 ALLOWED_HOSTS = [url.split("//")[1], "localhost", "*"]
 

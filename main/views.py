@@ -561,11 +561,9 @@ class AddMultipleContactView(APIView):
         request=ContactDetailsSerializer(many=True), responses=ContactDetailsSerializer
     )
     def post(self, request, format=None):
-        print(request.data)
         serializer = ContactDetailsSerializer(data=request.data, many=True)
         if serializer.is_valid():
             for contact in serializer.data:
-                print(contact)
                 # check contact exist or not
                 if not ContactDetails.objects.filter(
                     mobile=contact["mobile"], user_id=contact["user"]
@@ -590,7 +588,6 @@ class AddMultipleCallLogs(APIView):
         responses=AndroidDataSerializer,
     )
     def post(self, request, format=None):
-        print(request.data)
         serializer = AndroidDataSerializerWithoutUser(data=request.data, many=True)
 
         # fina latest call logs
@@ -610,7 +607,7 @@ class AddMultipleCallLogs(APIView):
                     AndroidData.objects.create(**logs, user=request.user)
             else:
                 return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-        return Response("Contact Added Successfully", status=201)
+        return Response("Call Logs Added Successfully", status=201)
 
 
 class AndroidDataView(viewsets.ModelViewSet):

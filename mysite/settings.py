@@ -12,7 +12,12 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 import os
 from datetime import timedelta
+from os import getenv
 from pathlib import Path
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -25,7 +30,7 @@ SECRET_KEY = "django-insecure-x8g-@8g@-1wio2ct2#3)97!2!jkd^nahs^e2oau^j!p3)@#qj2
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-url = "https://employee.iamag.duckdns.org"
+url = "https://a094-103-77-136-95.ngrok-free.app"
 
 ALLOWED_HOSTS = [url.split("//")[1], "localhost"]
 
@@ -92,6 +97,21 @@ DATABASES = {
         "NAME": os.path.join(BASE_DIR, "db.sqlite3"),
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": getenv("PGDATABASE"),
+#         "USER": getenv("PGUSER"),
+#         "PASSWORD": getenv("PGPASSWORD"),
+#         "HOST": getenv("PGHOST"),
+#         "PORT": getenv("PGPORT", 5432),
+#         "OPTIONS": {
+#             "sslmode": "require",
+#         },
+#     }
+# }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators

@@ -1,5 +1,6 @@
 from operator import contains
 
+from django.contrib.auth.base_user import BaseUserManager
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
@@ -14,26 +15,26 @@ class User(AbstractUser):
     is_employee = models.BooleanField("Is Employee", default=False)
     cats = models.IntegerField(default=0, blank=True, null=True)
 
-    def save(self, *args, **kwargs):
-
-        # Ensure password is hashed if it has been set/changed
-        if self.pk is None and self.password:
-            self.set_password(self.password)
-        else:
-            existing_user = User.objects.filter(pk=self.pk).first()
-            if existing_user and existing_user.password != self.password:
-                self.set_password(self.password)
-        super().save(*args, **kwargs)
-
-    def update(self, *args, **kwargs):
-        # Ensure password is hashed if it has been set/changed
-        if self.pk is None and self.password:
-            self.set_password(self.password)
-        else:
-            existing_user = User.objects.filter(pk=self.pk).first()
-            if existing_user and existing_user.password != self.password:
-                self.set_password(self.password)
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #
+    #     # Ensure password is hashed if it has been set/changed
+    #     if self.pk is None and self.password:
+    #         self.set_password(self.password)
+    #     else:
+    #         existing_user = User.objects.filter(pk=self.pk).first()
+    #         if existing_user and existing_user.password != self.password:
+    #             self.set_password(self.password)
+    #     super().save(*args, **kwargs)
+    #
+    # def update(self, *args, **kwargs):
+    #     # Ensure password is hashed if it has been set/changed
+    #     if self.pk is None and self.password:
+    #         self.set_password(self.password)
+    #     else:
+    #         existing_user = User.objects.filter(pk=self.pk).first()
+    #         if existing_user and existing_user.password != self.password:
+    #             self.set_password(self.password)
+    #     super().save(*args, **kwargs)
 
 
 # https://github.com/MamaMoh/Role_based_login_system/blob/master/account/models.py

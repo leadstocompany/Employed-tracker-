@@ -30,7 +30,7 @@ SECRET_KEY = "django-insecure-x8g-@8g@-1wio2ct2#3)97!2!jkd^nahs^e2oau^j!p3)@#qj2
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-url = "https://a094-103-77-136-95.ngrok-free.app"
+url = "https://employee.iamag.duckdns.org"
 
 ALLOWED_HOSTS = [url.split("//")[1], "localhost", "*"]
 

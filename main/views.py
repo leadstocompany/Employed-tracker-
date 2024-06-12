@@ -597,6 +597,7 @@ class AddMultipleCallLogs(APIView):
         if latest_call_logs is not None:
             if serializer.is_valid():
                 for logs in serializer.data:
+                    print(logs)
                     if latest_call_logs.date < parse(logs["date"]):
                         AndroidData.objects.create(**logs, user=request.user)
             else:

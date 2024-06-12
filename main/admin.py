@@ -60,6 +60,7 @@ class AndroidDataPanel(ImportExportModelAdmin):
         "duration",
         "mobile",
         "name",
+        "date",
         "user_type",
         "create_at",
         "update_at",

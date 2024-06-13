@@ -591,7 +591,7 @@ class AddMultipleCallLogs(APIView):
         serializer = AndroidDataSerializerWithoutUser(data=request.data, many=True)
 
         # fina latest call logs
-        latest_call_logs = AndroidData.objects.order_by("-date").first()
+        latest_call_logs = AndroidData.objects.filter(user=request.user).order_by("-date").first()
 
 
         if latest_call_logs is not None:
